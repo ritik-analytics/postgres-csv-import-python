@@ -1,0 +1,31 @@
+ import psycopg2
+
+conn = psycopg2.connect(
+    host="localhost",
+    database="olist.db",   # fixed
+    user="postgres",
+    password="password"
+)
+
+cursor = conn.cursor()
+
+with open(r"C:\Users\Ritik\Downloads\olist_geolocation_dataset.csv", "r") as f:
+    cursor.copy_expert(
+        """
+        COPY olist_geolocation_dataset(
+            geolocation_zip_code_prefix,
+            geolocation_lat,
+            geolocation_lng,
+            geolocation_city,
+            geolocation_state
+        )
+        FROM STDIN WITH CSV HEADER
+        """,
+        f
+    )
+
+conn.commit()
+cursor.close()
+conn.close()
+
+print("✅ Data Imported Successfully!")
